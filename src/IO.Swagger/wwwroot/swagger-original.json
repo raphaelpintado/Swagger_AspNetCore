@@ -1,0 +1,475 @@
+{
+  "swagger" : "2.0",
+  "info" : {
+    "description" : "Administra a movimentação bancária do correntista e controla o acesso através de CPF e senha.",
+    "version" : "1.0.0",
+    "title" : "ByteBank Api",
+    "termsOfService" : "http://localhost:8085//bytebank-api/v1/termo_uso",
+    "contact" : {
+      "name" : "Suporte",
+      "url" : "http://localhost:8085//bytebank-api/v1/suporte",
+      "email" : "suporte@bytebankapi.com"
+    }
+  },
+  "host" : "localhost:8085",
+  "basePath" : "/bytebank-api/v1",
+  "tags" : [ {
+    "name" : "Cliente"
+  }, {
+    "name" : "Conta"
+  }, {
+    "name" : "Extrato"
+  }, {
+    "name" : "Transacao"
+  } ],
+  "schemes" : [ "http", "https" ],
+  "consumes" : [ "application/json" ],
+  "produces" : [ "application/json" ],
+  "security" : [ {
+    "BasicAuth" : [ ]
+  } ],
+  "paths" : {
+    "/cliente" : {
+      "post" : {
+        "tags" : [ "Cliente" ],
+        "summary" : "Cadastra Cliente",
+        "description" : "Cadastra um novo cliente",
+        "operationId" : "CadastraCliente",
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "cliente_",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/definitions/Cliente"
+          }
+        } ],
+        "responses" : {
+          "201" : {
+            "description" : "Cadastro efetuado com sucesso",
+            "schema" : {
+              "$ref" : "#/definitions/Cliente"
+            }
+          },
+          "400" : {
+            "description" : "Requisição inválida"
+          },
+          "500" : {
+            "description" : "Erro interno no servidor"
+          }
+        }
+      }
+    },
+    "/conta/{agencia}/{numero}/{digito}/saldo" : {
+      "get" : {
+        "tags" : [ "Conta" ],
+        "summary" : "Consulta Saldo",
+        "description" : "Consulta o saldo da conta do cliente.",
+        "operationId" : "consultaSaldo",
+        "parameters" : [ {
+          "name" : "agencia",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        }, {
+          "name" : "numero",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int64"
+        }, {
+          "name" : "digito",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        }, {
+          "name" : "Authorization",
+          "in" : "header",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Consulta a saldo efetuada com sucesso",
+            "schema" : {
+              "type" : "number",
+              "format" : "double"
+            }
+          },
+          "400" : {
+            "description" : "Requisição inválida"
+          },
+          "401" : {
+            "description" : "Requisição não autorizada"
+          },
+          "500" : {
+            "description" : "Erro no servidor"
+          }
+        },
+        "security" : [ {
+          "BasicAuth" : [ ]
+        } ]
+      }
+    },
+    "/transacao" : {
+      "post" : {
+        "tags" : [ "Transacao" ],
+        "summary" : "Cadastra Transação na Conta",
+        "description" : "Cadastra uma transação de débito ou depósito na conta",
+        "operationId" : "cadastraTransacao",
+        "parameters" : [ {
+          "name" : "Authorization",
+          "in" : "header",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "in" : "body",
+          "name" : "transacao",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/Transacao"
+          }
+        }, {
+          "name" : "tipo",
+          "in" : "query",
+          "required" : true,
+          "type" : "string",
+          "enum" : [ "debito", "deposito" ]
+        } ],
+        "responses" : {
+          "201" : {
+            "description" : "Cadastro de transação efetuado com sucesso.",
+            "schema" : {
+              "$ref" : "#/definitions/Transacao"
+            }
+          },
+          "400" : {
+            "description" : "Requisição inválida"
+          },
+          "401" : {
+            "description" : "Requisição não autorizada"
+          },
+          "500" : {
+            "description" : "Erro no servidor"
+          }
+        },
+        "security" : [ {
+          "BasicAuth" : [ ]
+        } ]
+      }
+    },
+    "/extrato/{agencia}/{numero}/{digito}" : {
+      "get" : {
+        "tags" : [ "Extrato" ],
+        "summary" : "Consulta Extrato",
+        "description" : "Consulta o extrato da conta do cliente.",
+        "operationId" : "consultaExtrato",
+        "parameters" : [ {
+          "name" : "agencia",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        }, {
+          "name" : "numero",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int64"
+        }, {
+          "name" : "digito",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int32"
+        }, {
+          "name" : "Authorization",
+          "in" : "header",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Consulta de extrato efetuada com sucesso",
+            "schema" : {
+              "$ref" : "#/definitions/Extrato"
+            }
+          },
+          "400" : {
+            "description" : "Requisição inválida"
+          },
+          "401" : {
+            "description" : "Requisição não autorizada"
+          },
+          "500" : {
+            "description" : "Erro no servidor"
+          }
+        },
+        "security" : [ {
+          "BasicAuth" : [ ]
+        } ]
+      }
+    },
+    "/trasacao/{codigo}" : {
+      "put" : {
+        "tags" : [ "Transacao" ],
+        "summary" : "Altera o Valor da Transacao",
+        "description" : "Altera o valor da transação existente na conta do cliente",
+        "operationId" : "alteraValorTransacao",
+        "parameters" : [ {
+          "name" : "codigo",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int64"
+        }, {
+          "name" : "valor",
+          "in" : "query",
+          "required" : true,
+          "type" : "number",
+          "format" : "double"
+        }, {
+          "name" : "Authorization",
+          "in" : "header",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "Alteração do valor efetuada com sucesso"
+          },
+          "400" : {
+            "description" : "Requisição inválida"
+          },
+          "401" : {
+            "description" : "Requisição não autorizada"
+          },
+          "500" : {
+            "description" : "Erro no servidor"
+          }
+        },
+        "security" : [ {
+          "BasicAuth" : [ ]
+        } ]
+      },
+      "delete" : {
+        "tags" : [ "Transacao" ],
+        "summary" : "Exclui a Transação",
+        "description" : "Exclusão da transação existente na conta do cliente",
+        "operationId" : "excluiTransacao",
+        "parameters" : [ {
+          "name" : "codigo",
+          "in" : "path",
+          "required" : true,
+          "type" : "integer",
+          "format" : "int64"
+        }, {
+          "name" : "Authorization",
+          "in" : "header",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "Transação excluída com sucesso"
+          },
+          "400" : {
+            "description" : "Requisição inválida"
+          },
+          "401" : {
+            "description" : "Requisição não autorizada"
+          },
+          "500" : {
+            "description" : "Erro no servidor"
+          }
+        },
+        "security" : [ {
+          "BasicAuth" : [ ]
+        } ]
+      }
+    }
+  },
+  "securityDefinitions" : {
+    "BasicAuth" : {
+      "type" : "basic"
+    }
+  },
+  "definitions" : {
+    "Cliente" : {
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "type" : "integer",
+          "format" : "int64",
+          "example" : 234
+        },
+        "titular" : {
+          "type" : "string",
+          "example" : "Janete Silva"
+        },
+        "cpf" : {
+          "type" : "string",
+          "example" : "01234567890",
+          "minLength" : 11,
+          "maxLength" : 11
+        },
+        "senha" : {
+          "type" : "string",
+          "format" : "password",
+          "example" : "senha123"
+        },
+        "conta" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/Conta"
+          }
+        }
+      },
+      "example" : {
+        "senha" : "senha123",
+        "cpf" : "01234567890",
+        "conta" : [ {
+          "transacoes" : [ {
+            "tipo" : "debito",
+            "data" : "2000-01-23T04:56:07.000+00:00",
+            "valor" : 6.027456183070403,
+            "id" : 0
+          }, {
+            "tipo" : "debito",
+            "data" : "2000-01-23T04:56:07.000+00:00",
+            "valor" : 6.027456183070403,
+            "id" : 0
+          } ],
+          "numero" : 784563,
+          "saldo" : 101.34,
+          "agencia" : 975,
+          "digito" : 7
+        }, {
+          "transacoes" : [ {
+            "tipo" : "debito",
+            "data" : "2000-01-23T04:56:07.000+00:00",
+            "valor" : 6.027456183070403,
+            "id" : 0
+          }, {
+            "tipo" : "debito",
+            "data" : "2000-01-23T04:56:07.000+00:00",
+            "valor" : 6.027456183070403,
+            "id" : 0
+          } ],
+          "numero" : 784563,
+          "saldo" : 101.34,
+          "agencia" : 975,
+          "digito" : 7
+        } ],
+        "id" : 234,
+        "titular" : "Janete Silva"
+      }
+    },
+    "Conta" : {
+      "type" : "object",
+      "properties" : {
+        "agencia" : {
+          "type" : "integer",
+          "format" : "int32",
+          "example" : 975
+        },
+        "numero" : {
+          "type" : "integer",
+          "format" : "int64",
+          "example" : 784563
+        },
+        "digito" : {
+          "type" : "integer",
+          "format" : "int32",
+          "example" : 7
+        },
+        "saldo" : {
+          "type" : "number",
+          "format" : "double",
+          "example" : 101.34
+        },
+        "cliente" : {
+          "$ref" : "#/definitions/Cliente"
+        },
+        "transacoes" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/Transacao"
+          }
+        }
+      },
+      "example" : {
+        "transacoes" : [ {
+          "tipo" : "debito",
+          "data" : "2000-01-23T04:56:07.000+00:00",
+          "valor" : 6.027456183070403,
+          "id" : 0
+        }, {
+          "tipo" : "debito",
+          "data" : "2000-01-23T04:56:07.000+00:00",
+          "valor" : 6.027456183070403,
+          "id" : 0
+        } ],
+        "numero" : 784563,
+        "saldo" : 101.34,
+        "agencia" : 975,
+        "digito" : 7
+      }
+    },
+    "Transacao" : {
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "type" : "integer",
+          "format" : "int64"
+        },
+        "tipo" : {
+          "type" : "string",
+          "enum" : [ "debito", "deposito" ]
+        },
+        "valor" : {
+          "type" : "number",
+          "format" : "double"
+        },
+        "data" : {
+          "type" : "string",
+          "format" : "date-time"
+        },
+        "conta" : {
+          "$ref" : "#/definitions/Conta"
+        }
+      },
+      "example" : {
+        "tipo" : "debito",
+        "data" : "2000-01-23T04:56:07.000+00:00",
+        "valor" : 6.027456183070403,
+        "id" : 0
+      }
+    },
+    "Extrato" : {
+      "type" : "object",
+      "properties" : {
+        "transacoes" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/Transacao"
+          }
+        }
+      },
+      "example" : {
+        "transacoes" : [ {
+          "tipo" : "debito",
+          "data" : "2000-01-23T04:56:07.000+00:00",
+          "valor" : 6.027456183070403,
+          "id" : 0
+        }, {
+          "tipo" : "debito",
+          "data" : "2000-01-23T04:56:07.000+00:00",
+          "valor" : 6.027456183070403,
+          "id" : 0
+        } ]
+      }
+    }
+  }
+}
